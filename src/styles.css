@@ -1,0 +1,331 @@
+/* ========================= */
+/* VARIÁVEIS GLOBAIS (THEME) */
+/* ========================= */
+:root {
+  --bg-main: #1e1e2f;
+  --bg-section: #2a2a40;
+  --bg-card: #3a3a55;
+  --text-light: #f1f1f1;
+  --text-muted: #d6d6e7;
+  
+  --color-primary: #6c5ce7;
+  --color-primary-hover: #5848c2;
+  --color-danger: #e74c3c;
+  --color-danger-hover: #c0392b;
+  --color-success: #27ae60;
+  --color-warning: #f39c12;
+  --color-info: #2980b9;
+  
+  --radius-sm: 8px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  
+  --transition-fast: 0.2s ease-in-out;
+}
+
+/* ========================= */
+/* RESET & BASE */
+/* ========================= */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background-color: var(--bg-main);
+  color: var(--text-light);
+}
+
+h1 {
+  text-align: center;
+  margin: 20px 0;
+}
+
+/* ========================= */
+/* LAYOUT PRINCIPAL */
+/* ========================= */
+.container {
+  padding: 20px;
+}
+
+.grid {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start; /* Evita altura igual */
+}
+
+/* ========================= */
+/* KANBAN: COLUNAS & LISTA */
+/* ========================= */
+.section {
+  background: var(--bg-section);
+  border-radius: var(--radius-lg);
+  padding: 15px;
+  width: 32%;
+  display: flex;
+  flex-direction: column;
+  max-height: 80vh;
+}
+
+.section h2 {
+  margin-bottom: 10px;
+}
+
+.section > div:last-child {
+  overflow-y: auto;
+  margin-top: 10px;
+}
+
+/* ========================= */
+/* COMPONENTES COMPARTILHADOS */
+/* ========================= */
+/* Cards base */
+.card, .edit-cylinder-card {
+  background: var(--bg-card);
+  padding: 10px;
+  border-radius: var(--radius-md);
+  margin-bottom: 8px;
+}
+
+.card {
+  transition: transform var(--transition-fast);
+}
+
+.card:hover {
+  transform: scale(1.02);
+}
+
+.list-item, .edit-cylinder-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* ========================= */
+/* FORMULÁRIOS & BOTÕES */
+/* ========================= */
+form {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.cylinder-form {
+  flex-direction: column;
+  gap: 10px;
+}
+
+input, select, textarea {
+  padding: 10px;
+  border-radius: var(--radius-sm);
+  border: none;
+  outline: none;
+  background: var(--bg-card);
+  color: var(--text-light);
+}
+
+textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+button {
+  background-color: var(--color-primary);
+  color: var(--text-light);
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: 8px 12px;
+  cursor: pointer;
+  transition: background-color var(--transition-fast);
+}
+
+button:hover {
+  background-color: var(--color-primary-hover);
+}
+
+.delete-btn {
+  background-color: var(--color-danger);
+}
+
+.delete-btn:hover {
+  background-color: var(--color-danger-hover);
+}
+
+.error {
+  background: #ff7675;
+  color: var(--text-light);
+  padding: 6px;
+  border-radius: 6px;
+  margin-top: 5px;
+  font-size: 12px;
+}
+
+/* ========================= */
+/* NAVBAR */
+/* ========================= */
+.navbar {
+  background: var(--bg-section);
+  padding: 15px 20px;
+  border-radius: var(--radius-md);
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.nav-links {
+  display: flex;
+  gap: 15px;
+}
+
+.nav-links a {
+  color: var(--text-light);
+  text-decoration: none;
+  padding: 6px 10px;
+  border-radius: 6px;
+  transition: background-color var(--transition-fast);
+}
+
+.nav-links a:hover {
+  background: var(--color-primary);
+}
+
+/* ========================= */
+/* CILINDROS VISUAIS */
+/* ========================= */
+.cylinder-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-top: 15px;
+}
+
+.cylinder-card {
+  background: linear-gradient(145deg, #35355a, var(--bg-section));
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  transition: transform 0.25s, box-shadow 0.25s;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.cylinder-card:hover {
+  transform: translateY(-3px) scale(1.01);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.35);
+}
+
+.cylinder-image-container {
+  background: linear-gradient(135deg, var(--color-primary), #8e7dff);
+  border-radius: 12px;
+  padding: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 80px;
+  min-height: 80px;
+}
+
+.cylinder-image {
+  width: 55px;
+  height: 55px;
+  object-fit: contain;
+  filter: brightness(0) invert(1);
+}
+
+.cylinder-content {
+  flex: 1;
+}
+
+.cylinder-content h3 {
+  margin-bottom: 5px;
+  font-size: 18px;
+}
+
+.cylinder-content p {
+  color: var(--text-muted);
+  font-size: 14px;
+}
+
+.edit-cylinder-list {
+  margin-top: 20px;
+}
+
+/* ========================= */
+/* TANQUES */
+/* ========================= */
+.tank-grid {
+  display: flex;
+  gap: 30px;
+  flex-wrap: wrap;
+  align-items: flex-end;
+}
+
+.tank-wrapper {
+  width: 280px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.tank-top {
+  width: 180px;
+  height: 40px;
+  background: var(--color-primary);
+  border-radius: 100px 100px 20px 20px;
+}
+
+.tank-body {
+  width: 220px;
+  min-height: 340px;
+  background: linear-gradient(180deg, #9097a7, #5b6372);
+  border-radius: 20px;
+  padding: 20px;
+  position: relative;
+  box-shadow: 
+    inset -10px 0 20px rgba(0,0,0,0.3),
+    inset 10px 0 20px rgba(255,255,255,0.08),
+    0 10px 25px rgba(0,0,0,0.35);
+}
+
+.tank-bottom {
+  width: 120px;
+  height: 50px;
+  background: #505866;
+  clip-path: polygon(0 0, 100% 0, 70% 100%, 30% 100%);
+}
+
+.tank-header {
+  margin-bottom: 20px;
+}
+
+.tank-header h3 {
+  font-size: 22px;
+}
+
+.tank-info p {
+  margin: 8px 0;
+  font-size: 14px;
+}
+
+/* ========================= */
+/* STATUS BADGES */
+/* ========================= */
+.status {
+  display: inline-block;
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  margin-top: 10px;
+  color: var(--text-light);
+}
+
+.status.fermentando { background: var(--color-success); }
+.status.maturando   { background: var(--color-warning); }
+.status.finalizado  { background: var(--color-info); }
+.status.pausado     { background: var(--color-danger); }
