@@ -1,35 +1,77 @@
-import { useState, useContext } from "react";
-import { AppContext } from "../context/AppContext";
+import { useState, useContext }
+from "react";
+
+import { BeerContext }
+from "../contexts/BeerContext";
 
 export default function BeerTypeForm() {
-  const { beerTypes, setBeerTypes } = useContext(AppContext);
-  const [form, setForm] = useState({ name: "", style: "" });
-  const [error, setError] = useState("");
+
+  const {
+    beerTypes,
+    setBeerTypes
+  } = useContext(BeerContext);
+
+  const [name, setName] =
+    useState("");
+
+  const [error, setError] =
+    useState("");
 
   const handleSubmit = (e) => {
+
     e.preventDefault();
 
-    // validação
-    if (!form.name.trim() || !form.style.trim()) {
-      setError("Preencha todos os campos!");
+    if (!name.trim()) {
+      setError(
+        "Informe um nome válido."
+      );
       return;
     }
 
-    setBeerTypes([...beerTypes, { ...form, id: Date.now() }]);
+    const newBeer = {
+      id: Date.now(),
+      name
+    };
 
-    setForm({ name: "", style: "" });
-    setError(""); // limpa erro
+    setBeerTypes([
+      ...beerTypes,
+      newBeer
+    ]);
+
+    setName("");
+    setError("");
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <input placeholder="Nome" value={form.name}
-        onChange={e => setForm({ ...form, name: e.target.value })} />
-      <input placeholder="Estilo" value={form.style}
-        onChange={e => setForm({ ...form, style: e.target.value })} />
-      <button>Cadastrar</button>
-      {error && <p className="error">{error}</p>}
-    </form>
+    <div>
+
+      <h2>
+        Tipo de Cerveja
+      </h2>
+
+      <form onSubmit={handleSubmit}>
+
+        <input
+          type="text"
+          placeholder="Nome"
+          value={name}
+          onChange={(e) =>
+            setName(e.target.value)
+          }
+        />
+
+        <button type="submit">
+          Salvar
+        </button>
+
+      </form>
+
+      {error && (
+        <p className="error">
+          {error}
+        </p>
+      )}
+
+    </div>
   );
-  
 }

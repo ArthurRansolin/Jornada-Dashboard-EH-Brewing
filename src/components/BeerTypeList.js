@@ -1,29 +1,51 @@
-import { useContext } from "react";
-import { AppContext } from "../context/AppContext";
+import { useContext }
+from "react";
+
+import { BeerContext }
+from "../contexts/BeerContext";
 
 export default function BeerTypeList() {
-  const { beerTypes, setBeerTypes } = useContext(AppContext);
 
-  const remove = (id) => {
-    setBeerTypes(beerTypes.filter(b => b.id !== id));
+  const {
+    beerTypes,
+    setBeerTypes
+  } = useContext(BeerContext);
+
+  const removeBeer = (id) => {
+
+    setBeerTypes(
+      beerTypes.filter(
+        beer =>
+          beer.id !== id
+      )
+    );
   };
 
   return (
-    <div>
-      {beerTypes.map(b => (
-        <div key={b.id} className="card list-item">
-          <div>
-            <strong>{b.name}</strong> - {b.style}
-          </div>
+<div className="section-content">
+      {beerTypes.map(beer => (
 
-          <button 
-            className="delete-btn"
-            onClick={() => remove(b.id)}
+        <div
+          key={beer.id}
+          className="card"
+        >
+
+          <span>
+            {beer.name}
+          </span>
+
+          <button
+            onClick={() =>
+              removeBeer(beer.id)
+            }
           >
-            ❌
+            Excluir
           </button>
+
         </div>
+
       ))}
+
     </div>
   );
 }

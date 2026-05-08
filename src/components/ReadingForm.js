@@ -1,71 +1,120 @@
-import { useState, useContext } from "react";
-import { AppContext } from "../context/AppContext";
+import {
+  useContext,
+  useState
+} from "react";
+
+import { ReadingContext }
+from "../contexts/ReadingContext";
+
+import { TankContext }
+from "../contexts/TankContext";
 
 export default function ReadingForm() {
-  const { readings, setReadings, cylinders } = useContext(AppContext);
 
-  const [data, setData] = useState({ cylinderId: "", temp: "" });
-  const [error, setError] = useState("");
+  const {
+    readings,
+    setReadings
+  } = useContext(ReadingContext);
+
+  const { tanks } =
+    useContext(TankContext);
+
+  const [tankId, setTankId] =
+    useState("");
+
+  const [temp, setTemp] =
+    useState("");
+
+  const [error, setError] =
+    useState("");
 
   const handleSubmit = (e) => {
+
     e.preventDefault();
 
-    if (!data.cylinderId) {
-      setError("Selecione um cilindro!");
+    if (
+      !tankId ||
+      temp === ""
+    ) {
+      setError(
+        "Preencha todos os campos."
+      );
       return;
     }
 
-    const tempNumber = parseFloat(data.temp);
-
-    if (isNaN(tempNumber)) {
-      setError("Digite uma temperatura válida!");
-      return;
-    }
+    const newReading = {
+      id: Date.now(),
+      tankId,
+      temp,
+      date: new Date()
+    };
 
     setReadings([
       ...readings,
-      {
-        ...data,
-        temp: tempNumber,
-        id: Date.now(),
-        date: new Date()
-      }
+      newReading
     ]);
 
-    // limpar
-    setData({ cylinderId: "", temp: "" });
+    setTankId("");
+    setTemp("");
     setError("");
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <select
-        value={data.cylinderId}
-        onChange={(e) => {
-          setData({ ...data, cylinderId: e.target.value });
-          setError("");
-        }}
-      >
-        <option value="">Selecione um cilindro</option>
-        {cylinders.map(c => (
-          <option key={c.id} value={c.id}>
-            {c.name}
+    <div >
+
+      <h2>Leituras</h2>
+
+      <form onSubmit={handleSubmit}>
+
+        <select
+          value={tankId}
+          onChange={(e) =>
+            setTankId(
+              e.target.value
+            )
+          }
+        >
+
+          <option value="">
+            Selecione
           </option>
-        ))}
-      </select>
 
-      <input
-        type="number"
-        placeholder="Temperatura"
-        value={data.temp}
-        onChange={(e) => {
-          setData({ ...data, temp: e.target.value });
-          setError("");
-        }}
-      />
+          {tanks.map(tank => (
 
-      <button>Salvar</button>
-      {error && <p className="error">{error}</p>}
-    </form>
+            <option
+              key={tank.id}
+              value={tank.id}
+            >
+              {tank.name}
+            </option>
+
+          ))}
+
+        </select>
+
+        <input
+          type="number"
+          placeholder="Temperatura"
+          value={temp}
+          onChange={(e) =>
+            setTemp(
+              e.target.value
+            )
+          }
+        />
+
+        <button type="submit">
+          Salvar
+        </button>
+
+      </form>
+
+      {error && (
+        <p className="error">
+          {error}
+        </p>
+      )}
+
+    </div>
   );
 }

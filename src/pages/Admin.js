@@ -1,22 +1,38 @@
-import BeerTypeForm from "../components/BeerTypeForm";
-import BeerTypeList from "../components/BeerTypeList";
-import CylinderForm from "../components/CylinderForm";
-import CylinderList from "../components/CylinderList";
+import BeerTypeForm
+from "../components/BeerTypeForm";
+
+import BeerTypeList
+from "../components/BeerTypeList";
+
+import TankForm
+from "../components/TankForm";
+
+import TankList
+from "../components/TankList";
 
 export default function Admin() {
+
   return (
+
     <div className="grid">
+
       <div className="section">
-        <h2>Tipos de Cerveja</h2>
+
         <BeerTypeForm />
+
         <BeerTypeList />
+
       </div>
 
       <div className="section">
-        <h2>Cilindros</h2>
-        <CylinderForm />
-        <CylinderList />
+
+        <TankForm />
+
+        <TankList />
+
       </div>
+
     </div>
+
   );
 }
