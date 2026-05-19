@@ -1,8 +1,5 @@
-import { useState, useContext }
-from "react";
-
-import { BeerContext }
-from "../contexts/BeerContext";
+import { useState, useContext } from "react";
+import { BeerContext } from "../contexts/BeerContext";
 
 export default function BeerTypeForm() {
 

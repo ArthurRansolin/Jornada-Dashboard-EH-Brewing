@@ -1,8 +1,10 @@
-import { useContext }
-from "react";
+import {
+  useContext
+} from "react";
 
-import { useParams }
-from "react-router-dom";
+import {
+  useParams
+} from "react-router-dom";
 
 import { TankContext }
 from "../contexts/TankContext";
@@ -13,10 +15,12 @@ from "../contexts/ReadingContext";
 import { BeerContext }
 from "../contexts/BeerContext";
 
+import TemperatureSchedule
+from "../components/TemperatureSchedule";
+
 export default function TankDetails() {
 
-  const { id } =
-    useParams();
+  const { id } = useParams();
 
   const { tanks } =
     useContext(TankContext);
@@ -29,65 +33,77 @@ export default function TankDetails() {
 
   const tank =
     tanks.find(
-      t =>
-        String(t.id) ===
-        String(id)
+      tank =>
+        tank.id === Number(id)
     );
 
   if (!tank) {
 
     return (
-      <div className="section">
+      <div className="details-page">
 
-        <h2>
-          Tanque não encontrado
-        </h2>
+        <div className="details-card">
+
+          <h2>
+            Tanque não encontrado
+          </h2>
+
+        </div>
 
       </div>
     );
   }
 
+  const tankReadings =
+  readings.filter(
+    reading =>
+      Number(reading.tankId)
+      ===
+      Number(tank.id)
+  );
   const beer =
     beerTypes.find(
-      b =>
-        String(b.id) ===
-        String(tank.beerTypeId)
-    );
-
-  const tankReadings =
-    readings.filter(
-      r =>
-        String(r.tankId) ===
-        String(tank.id)
+      beer =>
+        beer.id === tank.beerTypeId
     );
 
   return (
+
     <div className="details-page">
+
+      {/* HEADER */}
 
       <div className="details-header">
 
         <div>
 
-          <h1>{tank.name}</h1>
+          <h1>
+            {tank.name}
+          </h1>
 
           <p>
-            {beer?.name ||
-              "Sem tipo"}
+            {
+              beer
+                ? beer.name
+                : "Sem tipo"
+            }
           </p>
 
         </div>
 
         <span
-          className={`status ${
-            tank.status?.toLowerCase()
-          }`}
+          className={`status ${tank.status}`}
         >
           {tank.status}
         </span>
 
       </div>
 
+      {/* GRID */}
+
       <div className="details-grid">
+
+        {/* INFO */}
 
         <div className="details-card">
 
@@ -96,59 +112,86 @@ export default function TankDetails() {
           </h2>
 
           <p>
-            Capacidade:
+            <strong>
+              Capacidade:
+            </strong>
+
             {" "}
-            {tank.capacity || "--"}L
+            {tank.capacity}L
           </p>
 
           <p>
-            Temperatura Ideal:
+            <strong>
+              Temperatura Ideal:
+            </strong>
+
             {" "}
-            {tank.targetTemp || "--"}°C
+            {tank.idealTemp}°C
           </p>
 
           <p>
-            Observações:
+            <strong>
+              Observações:
+            </strong>
+
             {" "}
-            {tank.notes ||
-              "Nenhuma"}
+            {
+              tank.notes ||
+              "Nenhuma"
+            }
           </p>
 
         </div>
+
+        {/* READINGS */}
 
         <div className="details-card">
 
-          <h2>Leituras</h2>
+          <h2>
+            Leituras
+          </h2>
 
-          {!tankReadings.length && (
-            <p>
-              Nenhuma leitura registrada.
-            </p>
-          )}
+          {
+            tankReadings.length === 0
+            ? (
+              <p>
+                Nenhuma leitura registrada.
+              </p>
+            )
+            : (
+              tankReadings.map(reading => (
 
-          {tankReadings.map(
-            reading => (
+                <div
+                  key={reading.id}
+                  className="reading-card"
+                >
 
-            <div
-              key={reading.id}
-              className="reading-card"
-            >
+                  <p>
+                    <strong>
+                      {reading.temperature}°C
+                    </strong>
+                  </p>
 
-              <div>
-                {reading.temp}°C
-              </div>
+                  <small>
+                    {
+                      reading.date ||
+                      "Sem data"
+                    }
+                  </small>
 
-              <small>
-                {new Date(
-                  reading.date
-                ).toLocaleString()}
-              </small>
+                </div>
 
-            </div>
-
-          ))}
+              ))
+            )
+          }
 
         </div>
+
+        {/* SCHEDULE */}
+
+        <TemperatureSchedule
+          tank={tank}
+        />
 
       </div>
 

@@ -1,79 +1,98 @@
-import { useContext }
-  from "react";
+import {
+  useContext
+} from "react";
 
 import { ReadingContext }
-  from "../contexts/ReadingContext";
+from "../contexts/ReadingContext";
 
 import { TankContext }
-  from "../contexts/TankContext";
+from "../contexts/TankContext";
 
 export default function ReadingList() {
 
   const {
     readings,
-    setReadings
+    removeReading
   } = useContext(ReadingContext);
 
   const { tanks } =
     useContext(TankContext);
 
-  const removeReading = (id) => {
+  function getTankName(tankId) {
 
-    setReadings(
-      readings.filter(
-        reading =>
-          reading.id !== id
-      )
-    );
-  };
-
-  const getTankName = (
-    tankId
-  ) => {
-
-    const tank = tanks.find(
-      t =>
-        String(t.id) ===
-        String(tankId)
-    );
+    const tank =
+      tanks.find(
+        tank =>
+          Number(tank.id)
+          ===
+          Number(tankId)
+      );
 
     return tank
       ? tank.name
-      : "Tanque";
-  };
+      : "Tanque removido";
+  }
 
   return (
+
     <div className="section-content">
-      {readings.map(reading => (
 
-        <div
-          key={reading.id}
-          className="card"
-        >
+      {
+        readings.length === 0
+        ? (
+          <p className="reading-empty">
+            Nenhuma leitura cadastrada.
+          </p>
+        )
+        : (
+          readings
+            .slice()
+            .reverse()
+            .map(reading => (
 
-          <span>
+              <div
+                key={reading.id}
+                className="reading-card"
+              >
 
-            {reading.temp}°C
-            {" - "}
-            {getTankName(
-              reading.tankId
-            )}
+                <div>
 
-          </span>
+                  <strong>
+                    {reading.temperature}°C
+                  </strong>
 
-          <button
-            onClick={() =>
-              removeReading(
-                reading.id
-              )
-            }
-          >
-            Excluir
-          </button>
+                  <p>
 
-        </div>
+                    {
+                      getTankName(
+                        reading.tankId
+                      )
+                    }
 
-      ))}
+                  </p>
+
+                  <small>
+                    {reading.date}
+                  </small>
+
+                </div>
+
+                <button
+                  className="delete-btn"
+                  onClick={() =>
+                    removeReading(
+                      reading.id
+                    )
+                  }
+                >
+                  Excluir
+                </button>
+
+              </div>
+
+            ))
+        )
+      }
 
     </div>
   );

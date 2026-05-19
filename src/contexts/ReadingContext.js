@@ -14,11 +14,17 @@ export function ReadingProvider({
   const [readings, setReadings] =
     useState(() => {
 
-      return JSON.parse(
-        localStorage.getItem("readings")
-      ) || [];
+      const saved =
+        localStorage.getItem(
+          "readings"
+        );
 
+      return saved
+        ? JSON.parse(saved)
+        : [];
     });
+
+  /* ====================================== */
 
   useEffect(() => {
 
@@ -29,14 +35,65 @@ export function ReadingProvider({
 
   }, [readings]);
 
+  /* ====================================== */
+  /* ADD */
+  /* ====================================== */
+
+  function addReading(reading) {
+
+    const newReading = {
+
+      id: Date.now(),
+
+      tankId:
+        Number(reading.tankId),
+
+      temperature:
+        Number(reading.temperature),
+
+      date:
+        new Date()
+          .toLocaleString(),
+
+      createdAt:
+        new Date()
+          .toISOString()
+    };
+
+    setReadings(prev => [
+      ...prev,
+      newReading
+    ]);
+  }
+
+  /* ====================================== */
+  /* REMOVE */
+  /* ====================================== */
+
+  function removeReading(id) {
+
+    setReadings(prev =>
+      prev.filter(
+        reading =>
+          reading.id !== id
+      )
+    );
+  }
+
   return (
+
     <ReadingContext.Provider
       value={{
+
         readings,
-        setReadings
+
+        addReading,
+        removeReading
       }}
     >
+
       {children}
+
     </ReadingContext.Provider>
   );
 }

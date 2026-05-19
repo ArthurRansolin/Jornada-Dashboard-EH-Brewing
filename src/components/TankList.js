@@ -1,101 +1,108 @@
-import { useContext }
-from "react";
+import { useContext } from "react";
 
-import { TankContext }
-from "../contexts/TankContext";
+import { Link } from "react-router-dom";
 
-import { BeerContext }
-from "../contexts/BeerContext";
-
-import { ReadingContext }
-from "../contexts/ReadingContext";
+import { TankContext } from "../contexts/TankContext";
+import { BeerContext } from "../contexts/BeerContext";
 
 export default function TankList() {
 
   const {
     tanks,
-    setTanks
+    removeTank
   } = useContext(TankContext);
 
-  const { beerTypes } =
-    useContext(BeerContext);
-
   const {
-    readings,
-    setReadings
-  } = useContext(ReadingContext);
+    beerTypes
+  } = useContext(BeerContext);
 
-  const removeTank = (id) => {
+  function getBeerName(beerTypeId) {
 
-    setTanks(
-      tanks.filter(
-        tank =>
-          tank.id !== id
-      )
+    const beer = beerTypes.find(
+      beer =>
+        Number(beer.id)
+        ===
+        Number(beerTypeId)
     );
-
-    setReadings(
-      readings.filter(
-        reading =>
-          String(
-            reading.tankId
-          ) !== String(id)
-      )
-    );
-  };
-
-  const getBeerName = (
-    beerId
-  ) => {
-
-    const beer =
-      beerTypes.find(
-        b =>
-          String(b.id) ===
-          String(beerId)
-      );
 
     return beer
       ? beer.name
       : "Sem tipo";
-  };
+  }
 
   return (
-<div className="section-content">
-      {tanks.map(tank => (
 
-        <div
-          key={tank.id}
-          className="card"
-        >
+    <div className="list-container">
 
-          <div>
+      {
+        tanks.length === 0
+        ? (
+          <p className="reading-empty">
+            Nenhum tanque cadastrado.
+          </p>
+        )
+        : (
+          tanks.map(tank => (
 
-            <strong>
-              {tank.name}
-            </strong>
+            <div
+              key={tank.id}
+              className="list-card"
+            >
 
-            <p>
-              {getBeerName(
-                tank.beerTypeId
-              )}
-            </p>
+              <div className="list-info">
 
-          </div>
+                <h3>
+                  {tank.name}
+                </h3>
 
-          <button
-            onClick={() =>
-              removeTank(
-                tank.id
-              )
-            }
-          >
-            Excluir
-          </button>
+                <p>
+                  Tipo:
+                  {" "}
+                  {getBeerName(
+                    tank.beerTypeId
+                  )}
+                </p>
 
-        </div>
+                <p>
+                  Capacidade:
+                  {" "}
+                  {tank.capacity}L
+                </p>
 
-      ))}
+                <p>
+                  Temp. Ideal:
+                  {" "}
+                  {tank.idealTemp}°C
+                </p>
+
+              </div>
+
+              <div className="list-actions">
+
+                <Link
+                  to={`/tanks/${tank.id}`}
+                >
+                  <button>
+                    Abrir
+                  </button>
+                </Link>
+
+                <button
+                  className="delete-btn"
+                  onClick={() =>
+                    removeTank(tank.id)
+                  }
+                >
+                  Excluir
+                </button>
+
+              </div>
+
+            </div>
+
+          ))
+        )
+      }
 
     </div>
   );

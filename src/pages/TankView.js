@@ -1,17 +1,8 @@
-import { useContext }
-from "react";
-
-import { TankContext }
-from "../contexts/TankContext";
-
-import { ReadingContext }
-from "../contexts/ReadingContext";
-
-import { BeerContext }
-from "../contexts/BeerContext";
-
-import TankCard
-from "../components/TankCard";
+import { useContext } from "react";
+import { TankContext } from "../contexts/TankContext";
+import { ReadingContext } from "../contexts/ReadingContext";
+import { BeerContext } from "../contexts/BeerContext";
+import TankCard from "../components/TankCard";
 
 export default function TankView() {
 

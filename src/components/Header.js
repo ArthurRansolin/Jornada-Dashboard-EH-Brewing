@@ -14,16 +14,12 @@ export default function Header() {
 
         <nav className="nav">
 
-          <Link to="/">
-            Dashboard
+          <Link to="/admin">
+            Admin
           </Link>
 
           <Link to="/tanks">
             Tanques
-          </Link>
-
-          <Link to="/admin">
-            Admin
           </Link>
 
         </nav>

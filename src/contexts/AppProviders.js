@@ -1,11 +1,6 @@
-import { BeerProvider }
-from "./BeerContext";
-
-import { TankProvider }
-from "./TankContext";
-
-import { ReadingProvider }
-from "./ReadingContext";
+import { BeerProvider } from "./BeerContext";
+import { TankProvider } from "./TankContext";
+import { ReadingProvider } from "./ReadingContext";
 
 export default function AppProviders({
   children

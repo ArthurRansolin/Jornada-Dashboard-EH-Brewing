@@ -4,69 +4,97 @@ from "react-router-dom";
 export default function TankCard({
   tank,
   beerName,
-  lastReading
+  lastReading,
+  removeTank
 }) {
 
   return (
-    <Link
-      to={`/tanks/${tank.id}`}
-      className="tank-link"
-    >
 
-      <div className="tank-wrapper">
+    <div className="tank-wrapper">
 
-        <div className="tank-top"></div>
+      {/* TOP */}
 
-        <div className="tank-body">
+      <div className="tank-top"></div>
 
-          <div className="tank-header">
+      {/* BODY */}
 
-            <h3>{tank.name}</h3>
+      <div className="tank-body">
 
-            <span
-              className={`status ${
-                tank.status?.toLowerCase()
-              }`}
-            >
-              {tank.status}
-            </span>
+        {/* HEADER */}
 
-          </div>
+        <div className="tank-header">
 
-          <div className="tank-info">
+          <h3>
+            {tank.name}
+          </h3>
 
-            <p>
-              Tipo:
-              {" "}
-              {beerName}
-            </p>
-
-            <p>
-              Capacidade:
-              {" "}
-              {tank.capacity || "--"}L
-            </p>
-
-            <p>
-              Temperatura Ideal:
-              {" "}
-              {tank.targetTemp || "--"}°C
-            </p>
-
-            <p>
-              Temperatura Atual:
-              {" "}
-              {lastReading ?? "--"}°C
-            </p>
-
-          </div>
+          <span
+            className={`status ${tank.status}`}
+          >
+            {tank.status}
+          </span>
 
         </div>
 
-        <div className="tank-bottom"></div>
+        {/* CONTENT */}
+
+        <div className="tank-info">
+
+          <p>
+            <strong>Tipo:</strong>{" "}
+            {beerName}
+          </p>
+
+          <p>
+            <strong>Capacidade:</strong>{" "}
+            {tank.capacity || "--"}L
+          </p>
+
+          <p>
+            <strong>Temperatura Ideal:</strong>{" "}
+            {tank.idealTemp || "--"}°C
+          </p>
+
+          <p>
+            <strong>Temperatura Atual:</strong>{" "}
+            {
+              lastReading
+                ? `${lastReading.temperature}°C`
+                : "--°C"
+            }
+          </p>
+
+        </div>
+
+        {/* ACTIONS */}
+
+        <div className="tank-card-actions">
+
+          <Link
+            to={`/tanks/${tank.id}`}
+          >
+            <button>
+              Abrir
+            </button>
+          </Link>
+
+          <button
+            className="delete-btn"
+            onClick={() =>
+              removeTank(tank.id)
+            }
+          >
+            Excluir
+          </button>
+
+        </div>
 
       </div>
 
-    </Link>
+      {/* BOTTOM */}
+
+      <div className="tank-bottom"></div>
+
+    </div>
   );
 }

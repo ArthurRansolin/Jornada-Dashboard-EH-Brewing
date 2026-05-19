@@ -12,111 +12,132 @@ from "../contexts/BeerContext";
 export default function TankForm() {
 
   const {
-    tanks,
-    setTanks
+    addTank
   } = useContext(TankContext);
 
-  const { beerTypes } =
-    useContext(BeerContext);
+  const {
+    beerTypes
+  } = useContext(BeerContext);
 
   const [name, setName] =
     useState("");
 
-  const [beerTypeId,
-    setBeerTypeId] =
-    useState("");
+  const [
+    beerTypeId,
+    setBeerTypeId
+  ] = useState("");
 
-  const [capacity,
-    setCapacity] =
-    useState("");
+  const [
+    capacity,
+    setCapacity
+  ] = useState("");
 
-  const [targetTemp,
-    setTargetTemp] =
-    useState("");
+  const [
+    idealTemp,
+    setIdealTemp
+  ] = useState("");
 
-  const [status,
-    setStatus] =
-    useState("Fermentando");
+  const [status, setStatus] =
+    useState("fermentando");
 
-  const [notes,
-    setNotes] =
+  const [notes, setNotes] =
     useState("");
 
   const [error, setError] =
     useState("");
 
-  const handleSubmit = (e) => {
+  function handleSubmit(e) {
 
     e.preventDefault();
 
     if (
       !name ||
-      !beerTypeId
+      !beerTypeId ||
+      !capacity ||
+      !idealTemp
     ) {
+
       setError(
-        "Preencha os campos obrigatórios."
+        "Preencha todos os campos."
       );
+
       return;
     }
 
-    const newTank = {
-      id: Date.now(),
-      name,
-      beerTypeId,
-      capacity,
-      targetTemp,
-      status,
-      notes
-    };
+    addTank({
 
-    setTanks([
-      ...tanks,
-      newTank
-    ]);
+      name,
+
+      beerTypeId:
+        Number(beerTypeId),
+
+      capacity:
+        Number(capacity),
+
+      idealTemp:
+        Number(idealTemp),
+
+      status,
+
+      notes
+    });
+
+    /* RESET */
 
     setName("");
     setBeerTypeId("");
     setCapacity("");
-    setTargetTemp("");
-    setStatus(
-      "Fermentando"
-    );
+    setIdealTemp("");
+    setStatus("fermentando");
     setNotes("");
     setError("");
-  };
+  }
 
   return (
-    <div >
 
-      <h2>Tanques</h2>
+    <form
+      className="cylinder-form"
+      onSubmit={handleSubmit}
+    >
 
-      <form onSubmit={handleSubmit}>
+      {
+        error && (
+          <div className="error">
+            {error}
+          </div>
+        )
+      }
 
-        <input
-          type="text"
-          placeholder="Nome"
-          value={name}
-          onChange={(e) =>
-            setName(
-              e.target.value
-            )
-          }
-        />
+      {/* NAME */}
 
-        <select
-          value={beerTypeId}
-          onChange={(e) =>
-            setBeerTypeId(
-              e.target.value
-            )
-          }
-        >
+      <input
+        type="text"
+        placeholder="Nome do tanque"
+        value={name}
+        onChange={e =>
+          setName(
+            e.target.value
+          )
+        }
+      />
 
-          <option value="">
-            Tipo de cerveja
-          </option>
+      {/* BEER */}
 
-          {beerTypes.map(beer => (
+      <select
+        value={beerTypeId}
+        onChange={e =>
+          setBeerTypeId(
+            e.target.value
+          )
+        }
+      >
+
+        <option value="">
+          Selecione o tipo
+        </option>
+
+        {
+          beerTypes.map(beer => (
 
             <option
               key={beer.id}
@@ -125,81 +146,82 @@ export default function TankForm() {
               {beer.name}
             </option>
 
-          ))}
+          ))
+        }
 
-        </select>
+      </select>
 
-        <input
-          type="number"
-          placeholder="Capacidade"
-          value={capacity}
-          onChange={(e) =>
-            setCapacity(
-              e.target.value
-            )
-          }
-        />
+      {/* CAPACITY */}
 
-        <input
-          type="number"
-          placeholder="Temperatura Ideal"
-          value={targetTemp}
-          onChange={(e) =>
-            setTargetTemp(
-              e.target.value
-            )
-          }
-        />
+      <input
+        type="number"
+        placeholder="Capacidade (L)"
+        value={capacity}
+        onChange={e =>
+          setCapacity(
+            e.target.value
+          )
+        }
+      />
 
-        <select
-          value={status}
-          onChange={(e) =>
-            setStatus(
-              e.target.value
-            )
-          }
-        >
+      {/* TEMP */}
 
-          <option>
-            Fermentando
-          </option>
+      <input
+        type="number"
+        placeholder="Temperatura ideal °C"
+        value={idealTemp}
+        onChange={e =>
+          setIdealTemp(
+            e.target.value
+          )
+        }
+      />
 
-          <option>
-            Maturando
-          </option>
+      {/* STATUS */}
 
-          <option>
-            Finalizado
-          </option>
+      <select
+        value={status}
+        onChange={e =>
+          setStatus(
+            e.target.value
+          )
+        }
+      >
 
-          <option>
-            Pausado
-          </option>
+        <option value="fermentando">
+          Fermentando
+        </option>
 
-        </select>
+        <option value="maturando">
+          Maturando
+        </option>
 
-        <textarea
-          placeholder="Observações"
-          value={notes}
-          onChange={(e) =>
-            setNotes(
-              e.target.value
-            )
-          }
-        />
+        <option value="finalizado">
+          Finalizado
+        </option>
 
-        <button type="submit">
-          Salvar
-        </button>
+        <option value="pausado">
+          Pausado
+        </option>
 
-      </form>
+      </select>
 
-      {error && (
-        <p className="error">
-          {error}
-        </p>
-      )}
+      {/* NOTES */}
 
-    </div>
+      <textarea
+        placeholder="Observações"
+        value={notes}
+        onChange={e =>
+          setNotes(
+            e.target.value
+          )
+        }
+      />
+
+      <button type="submit">
+        Adicionar Tanque
+      </button>
+
+    </form>
   );
 }

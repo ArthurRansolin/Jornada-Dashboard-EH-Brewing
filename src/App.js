@@ -3,18 +3,17 @@ import "./styles.css";
 import {
   BrowserRouter,
   Routes,
-  Route
+  Route,
+  Navigate
 } from "react-router-dom";
 
 import Header from "./components/Header";
 
-import Dashboard from "./pages/Dashboard";
 import Admin from "./pages/Admin";
 import TankView from "./pages/TankView";
 import TankDetails from "./pages/TankDetails";
 
-import AppProviders
-from "./contexts/AppProviders";
+import AppProviders from "./contexts/AppProviders";
 
 function App() {
 
@@ -24,15 +23,17 @@ function App() {
 
       <BrowserRouter>
 
-        <div className="container">
+        <Header />
 
-          <Header />
+        <div className="container">
 
           <Routes>
 
             <Route
               path="/"
-              element={<Dashboard />}
+              element={
+                <Navigate to="/admin" />
+              }
             />
 
             <Route
