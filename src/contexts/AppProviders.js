@@ -1,22 +1,5 @@
-import { BeerProvider } from "./BeerContext";
-import { TankProvider } from "./TankContext";
-import { ReadingProvider } from "./ReadingContext";
+import { ApiProvider } from './ApiContext';
 
-export default function AppProviders({
-  children
-}) {
-
-  return (
-    <BeerProvider>
-
-      <TankProvider>
-
-        <ReadingProvider>
-          {children}
-        </ReadingProvider>
-
-      </TankProvider>
-
-    </BeerProvider>
-  );
+export default function AppProviders({ children }) {
+  return <ApiProvider>{children}</ApiProvider>;
 }

@@ -362,3 +362,68 @@ button:hover { background: var(--primary-hover); transform: translateY(-1px); }
   .header-content { padding: 18px; }
   .container { padding: 16px; }
 }
+
+body {
+  font-family: Arial, sans-serif;
+  background: #101418;
+  color: #e6edf3;
+  margin: 0;
+}
+
+.page {
+  padding: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.card {
+  background: #17212b;
+  border: 1px solid #243241;
+  border-radius: 12px;
+  padding: 18px;
+  margin-bottom: 18px;
+}
+
+.grid2 {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 14px;
+}
+
+input,
+select,
+button {
+  border-radius: 8px;
+  border: 1px solid #334155;
+  background: #0f1720;
+  color: #e6edf3;
+  padding: 10px;
+}
+
+button {
+  cursor: pointer;
+  background: #2563eb;
+  border: none;
+}
+
+.actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 14px;
+}
+
+ul {
+  padding-left: 18px;
+}
+
+a {
+  color: inherit;
+}
