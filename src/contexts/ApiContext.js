@@ -8,6 +8,9 @@ export const useApi = () => useContext(ApiContext);
 export function ApiProvider({ children }) {
   const [tanks, setTanks] = useState([]);
   const [controllers, setControllers] = useState([]);
+  const [beerTypes, setBeerTypes] = useState([]);
+  const [profiles, setProfiles] = useState([]);
+  const [batches, setBatches] = useState([]);
   const [readings, setReadings] = useState([]);
   const [logs, setLogs] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -17,14 +20,20 @@ export function ApiProvider({ children }) {
     setLoading(true);
     setError('');
     try {
-      const [t, c, r, l] = await Promise.all([
+      const [t, c, bt, p, ba, r, l] = await Promise.all([
         api.get('/tanks'),
         api.get('/controllers'),
-        api.get('/readings?limit=200'),
+        api.get('/beer-types'),
+        api.get('/profiles'),
+        api.get('/batches'),
+        api.get('/readings?limit=2000'),
         api.get('/logs/commands'),
       ]);
       setTanks(t);
       setControllers(c);
+      setBeerTypes(bt);
+      setProfiles(p);
+      setBatches(ba);
       setReadings(r);
       setLogs(l);
     } catch (e) {
@@ -42,6 +51,9 @@ export function ApiProvider({ children }) {
     () => ({
       tanks,
       controllers,
+      beerTypes,
+      profiles,
+      batches,
       readings,
       logs,
       loading,
@@ -71,16 +83,42 @@ export function ApiProvider({ children }) {
         await api.del(`/controllers/${id}`);
         await refresh();
       },
+      createBeerType: async (payload) => {
+        await api.post('/beer-types', payload);
+        await refresh();
+      },
+      updateBeerType: async (id, payload) => {
+        await api.put(`/beer-types/${id}`, payload);
+        await refresh();
+      },
+      deleteBeerType: async (id) => {
+        await api.del(`/beer-types/${id}`);
+        await refresh();
+      },
       testConnection: (id) => api.post(`/controllers/${id}/test-connection`, {}),
       setpoint: (id, value) => api.post(`/controllers/${id}/setpoint`, { value }),
       run: (id, enabled) => api.post(`/controllers/${id}/run`, { enabled }),
       mode: (id, mode) => api.post(`/controllers/${id}/mode`, { mode }),
       manualMv: (id, value) => api.post(`/controllers/${id}/manual-mv`, { value }),
-      createProfile: (payload) => api.post('/profiles', payload),
-      createProfileSegment: (id, payload) => api.post(`/profiles/${id}/segments`, payload),
+      createProfile: async (payload) => {
+        await api.post('/profiles', payload);
+        await refresh();
+      },
+      createProfileSegment: async (id, payload) => {
+        await api.post(`/profiles/${id}/segments`, payload);
+        await refresh();
+      },
+      startBatch: async (payload) => {
+        await api.post('/batches/start', payload);
+        await refresh();
+      },
+      finishBatch: async (id) => {
+        await api.post(`/batches/${id}/finish`, {});
+        await refresh();
+      },
       getLatestReading: (tankId) => api.get(`/tanks/${tankId}/latest-reading`),
     }),
-    [tanks, controllers, readings, logs, loading, error]
+    [tanks, controllers, beerTypes, profiles, batches, readings, logs, loading, error]
   );
 
   return <ApiContext.Provider value={value}>{children}</ApiContext.Provider>;

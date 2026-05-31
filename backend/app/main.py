@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.api.alarms import router as alarms_router
 from app.api.batches import router as batches_router
+from app.api.beer_types import router as beer_types_router
 from app.api.commands import router as commands_router
 from app.api.controllers import router as controllers_router
 from app.api.logs import router as logs_router
@@ -12,8 +13,24 @@ from app.core.config import settings
 from app.core.database import Base, engine
 from app.workers.polling_worker import PollingWorker
 import app.models  # noqa
+from sqlalchemy import inspect, text
 
 Base.metadata.create_all(bind=engine)
+
+
+def ensure_sqlite_columns():
+    if engine.dialect.name != 'sqlite':
+        return
+    inspector = inspect(engine)
+    if 'beer_types' not in inspector.get_table_names():
+        return
+    columns = {column['name'] for column in inspector.get_columns('beer_types')}
+    with engine.begin() as connection:
+        if 'default_profile_id' not in columns:
+            connection.execute(text('ALTER TABLE beer_types ADD COLUMN default_profile_id INTEGER'))
+
+
+ensure_sqlite_columns()
 app = FastAPI(title=settings.APP_NAME)
 worker = PollingWorker()
 
@@ -26,6 +43,7 @@ app.add_middleware(
 )
 
 app.include_router(controllers_router)
+app.include_router(beer_types_router)
 app.include_router(tanks_router)
 app.include_router(readings_router)
 app.include_router(profiles_router)

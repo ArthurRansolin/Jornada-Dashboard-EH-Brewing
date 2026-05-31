@@ -12,6 +12,10 @@ import Header from "./components/Header";
 import Admin from "./pages/Admin";
 import TankView from "./pages/TankView";
 import TankDetails from "./pages/TankDetails";
+import TestBench from "./pages/TestBench";
+import BatchDetails from "./pages/BatchDetails";
+import BatchList from "./pages/BatchList";
+import DashboardPage from "./pages/DashboardPage";
 
 import AppProviders from "./contexts/AppProviders";
 
@@ -32,8 +36,13 @@ function App() {
             <Route
               path="/"
               element={
-                <Navigate to="/admin" />
+                <Navigate to="/dashboard" />
               }
+            />
+
+            <Route
+              path="/dashboard"
+              element={<DashboardPage />}
             />
 
             <Route
@@ -49,6 +58,21 @@ function App() {
             <Route
               path="/tanks/:id"
               element={<TankDetails />}
+            />
+
+            <Route
+              path="/test-bench"
+              element={<TestBench />}
+            />
+
+            <Route
+              path="/batches"
+              element={<BatchList />}
+            />
+
+            <Route
+              path="/batches/:id"
+              element={<BatchDetails />}
             />
 
           </Routes>

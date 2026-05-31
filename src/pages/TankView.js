@@ -1,71 +1,40 @@
-import { useContext } from "react";
-import { TankContext } from "../contexts/TankContext";
-import { ReadingContext } from "../contexts/ReadingContext";
-import { BeerContext } from "../contexts/BeerContext";
+import { useMemo } from "react";
 import TankCard from "../components/TankCard";
+import { useApi } from "../contexts/ApiContext";
 
 export default function TankView() {
+  const api = useApi();
 
-  const { tanks } =
-    useContext(TankContext);
+  const latestByTank = useMemo(() => {
+    const map = new Map();
+    api.readings.forEach((reading) => {
+      if (reading.tank_id && !map.has(reading.tank_id)) {
+        map.set(reading.tank_id, reading);
+      }
+    });
+    return map;
+  }, [api.readings]);
 
-  const { readings } =
-    useContext(ReadingContext);
-
-  const { beerTypes } =
-    useContext(BeerContext);
-
-  const getBeerName = (id) => {
-
-    const beer =
-      beerTypes.find(
-        b =>
-          String(b.id) ===
-          String(id)
-      );
-
-    return beer
-      ? beer.name
-      : "Sem tipo";
-  };
-
-  const getLastReading = (
-    tankId
-  ) => {
-
-    const filtered =
-      readings.filter(
-        r =>
-          String(r.tankId) ===
-          String(tankId)
-      );
-
-    if (!filtered.length)
-      return null;
-
-    return filtered[
-      filtered.length - 1
-    ].temp;
-  };
+  if (api.tanks.length === 0) {
+    return (
+      <div className="details-card">
+        <h2>Nenhum tanque cadastrado</h2>
+        <p>Cadastre tanques e controladores no Admin para acompanhar a operação.</p>
+      </div>
+    );
+  }
 
   return (
     <div className="tank-grid">
-
-      {tanks.map(tank => (
-
+      {api.tanks.map((tank) => (
         <TankCard
           key={tank.id}
           tank={tank}
-          beerName={getBeerName(
-            tank.beerTypeId
-          )}
-          lastReading={getLastReading(
-            tank.id
-          )}
+          beerName="Definido no lote"
+          lastReading={latestByTank.get(tank.id)}
+          removeTank={api.deleteTank}
         />
-
       ))}
-
     </div>
   );
 }

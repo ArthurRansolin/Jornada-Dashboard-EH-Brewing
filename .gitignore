@@ -2,16 +2,20 @@
 
 # dependencies
 /node_modules
+/.venv
 /.pnp
 .pnp.js
 /all_code.txt
 /README.md
+__pycache__/
+*.py[cod]
 
 # testing
 /coverage
 
 # production
 /build
+*.db
 
 # misc
 .DS_Store

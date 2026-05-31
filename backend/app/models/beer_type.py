@@ -1,4 +1,4 @@
-from sqlalchemy import Float, Integer, String, Text
+from sqlalchemy import Float, ForeignKey, Integer, String, Text
 from sqlalchemy.orm import Mapped, mapped_column
 from app.core.database import Base
 
@@ -11,3 +11,4 @@ class BeerType(Base):
     description: Mapped[str | None] = mapped_column(Text, nullable=True)
     ideal_temp_min: Mapped[float | None] = mapped_column(Float, nullable=True)
     ideal_temp_max: Mapped[float | None] = mapped_column(Float, nullable=True)
+    default_profile_id: Mapped[int | None] = mapped_column(ForeignKey('temperature_profiles.id'), nullable=True)
