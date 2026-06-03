@@ -1,0 +1,17 @@
+Na pasta do projeto:
+
+cd C:\Users\teste\Documents\projetobrew\Jornada-Dashboard-EH-Brewing
+npm install
+Depois, para o backend, precisa ter Python instalado. Aí rode:
+
+cd C:\Users\teste\Documents\projetobrew\Jornada-Dashboard-EH-Brewing
+python -m venv .venv
+.\.venv\Scripts\pip.exe install -r backend\requirements.txt
+Depois disso, os comandos normais são:
+
+cd C:\Users\teste\Documents\projetobrew\Jornada-Dashboard-EH-Brewing\backend
+..\.venv\Scripts\python.exe -m uvicorn app.main:app --host 127.0.0.1 --port 8000
+E em outro terminal:
+
+cd C:\Users\teste\Documents\projetobrew\Jornada-Dashboard-EH-Brewing
+npm start
