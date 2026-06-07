@@ -55,7 +55,10 @@ app.include_router(logs_router)
 
 @app.on_event('startup')
 def startup_event():
-    worker.start()
+    if settings.MODBUS_ENABLED:
+        worker.start()
+    else:
+        print('[polling] desativado: MODBUS_ENABLED=false')
 
 
 @app.on_event('shutdown')

@@ -2,16 +2,38 @@ Na pasta do projeto:
 
 cd C:\Users\teste\Documents\projetobrew\Jornada-Dashboard-EH-Brewing
 npm install
-Depois, para o backend, precisa ter Python instalado. Aí rode:
+
+Depois, para o backend, precisa ter Python instalado. Rode:
 
 cd C:\Users\teste\Documents\projetobrew\Jornada-Dashboard-EH-Brewing
 python -m venv .venv
 .\.venv\Scripts\pip.exe install -r backend\requirements.txt
-Depois disso, os comandos normais são:
+
+Para iniciar o backend pela raiz do projeto:
+
+.\.venv\Scripts\python.exe -m uvicorn app.main:app --app-dir backend --reload --port 8000
+
+Ou, se ja estiver dentro da pasta backend:
 
 cd C:\Users\teste\Documents\projetobrew\Jornada-Dashboard-EH-Brewing\backend
-..\.venv\Scripts\python.exe -m uvicorn app.main:app --host 127.0.0.1 --port 8000
-E em outro terminal:
+..\.venv\Scripts\python.exe -m uvicorn app.main:app --reload --port 8000
+
+Para popular o banco:
+
+cd C:\Users\teste\Documents\projetobrew\Jornada-Dashboard-EH-Brewing\backend
+..\.venv\Scripts\python.exe -m app.scripts.seed
+
+Os erros de conexao em 127.0.0.1:5020 aparecem quando o polling Modbus esta ligado,
+mas o simulador/hardware nao esta rodando. Para usar so o dashboard demo, deixe no .env:
+
+MODBUS_ENABLED=false
+
+Para testar polling Modbus, mude para MODBUS_ENABLED=true e rode o simulador em outro terminal:
+
+cd C:\Users\teste\Documents\projetobrew\Jornada-Dashboard-EH-Brewing\backend
+..\.venv\Scripts\python.exe -m simulator.main
+
+Em outro terminal, inicie o frontend pela raiz do projeto:
 
 cd C:\Users\teste\Documents\projetobrew\Jornada-Dashboard-EH-Brewing
 npm start
