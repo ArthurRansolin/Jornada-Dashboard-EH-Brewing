@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.core.database import get_db
+from app.models.controller import Controller
 from app.repositories.command_log_repo import create_command_log
 from app.repositories.controller_repo import (
     create_controller,
@@ -24,6 +25,12 @@ def get_all(db: Session = Depends(get_db)):
 
 @router.post('', response_model=ControllerOut)
 def create(payload: ControllerCreate, db: Session = Depends(get_db)):
+    existing = db.query(Controller).filter(Controller.slave_id == payload.slave_id).first()
+    if existing:
+        raise HTTPException(
+            status_code=409,
+            detail=f'Slave ID {payload.slave_id} already exists',
+        )
     return create_controller(db, payload.model_dump())
 
 

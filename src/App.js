@@ -6,6 +6,7 @@ import {
   Route,
   Navigate
 } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 
 import Header from "./components/Header";
 
@@ -16,20 +17,18 @@ import TestBench from "./pages/TestBench";
 import BatchDetails from "./pages/BatchDetails";
 import BatchList from "./pages/BatchList";
 import DashboardPage from "./pages/DashboardPage";
+import PublicFermentationPage from "./pages/PublicFermentationPage";
 
 import AppProviders from "./contexts/AppProviders";
 
-function App() {
-
+function AppShell() {
+  const location = useLocation();
+  const isPublicPage = location.pathname.startsWith("/fermentacoes/");
   return (
+    <>
+      {!isPublicPage && <Header />}
 
-    <AppProviders>
-
-      <BrowserRouter>
-
-        <Header />
-
-        <div className="container">
+      <div className={isPublicPage ? "public-container" : "container"}>
 
           <Routes>
 
@@ -75,9 +74,27 @@ function App() {
               element={<BatchDetails />}
             />
 
+            <Route
+              path="/fermentacoes/:id"
+              element={<PublicFermentationPage />}
+            />
+
           </Routes>
 
         </div>
+    </>
+  );
+}
+
+function App() {
+
+  return (
+
+    <AppProviders>
+
+      <BrowserRouter>
+
+        <AppShell />
 
       </BrowserRouter>
 

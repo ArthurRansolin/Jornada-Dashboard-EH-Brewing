@@ -5,6 +5,7 @@ from app.repositories.reading_repo import latest_tank_reading
 from app.repositories.tank_repo import create_tank, delete_tank, get_tank, list_tanks, update_tank
 from app.schemas.reading import ReadingOut
 from app.schemas.tank import TankCreate, TankOut, TankUpdate
+from app.models.tank import Tank
 
 router = APIRouter(prefix='/tanks', tags=['tanks'])
 
@@ -16,6 +17,13 @@ def get_all(db: Session = Depends(get_db)):
 
 @router.post('', response_model=TankOut)
 def create(payload: TankCreate, db: Session = Depends(get_db)):
+    if payload.controller_id is not None:
+        existing = db.query(Tank).filter(Tank.controller_id == payload.controller_id).first()
+        if existing:
+            raise HTTPException(
+                status_code=409,
+                detail='Controller already linked to another tank',
+            )
     return create_tank(db, payload.model_dump())
 
 
