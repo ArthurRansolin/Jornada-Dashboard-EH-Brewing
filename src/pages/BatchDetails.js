@@ -9,6 +9,7 @@ import {
 } from "chart.js";
 import { Line } from "react-chartjs-2";
 import { Link, useParams } from "react-router-dom";
+import { QRCodeSVG } from "qrcode.react";
 import { useApi } from "../contexts/ApiContext";
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Tooltip, Legend);
@@ -48,6 +49,10 @@ function getRampState(profile, batch) {
   };
 }
 
+function publicFermentationUrl(batchId) {
+  return `${window.location.origin}/fermentacoes/${batchId}`;
+}
+
 export default function BatchDetails() {
   const { id } = useParams();
   const api = useApi();
@@ -69,6 +74,7 @@ export default function BatchDetails() {
   const profile = api.profiles.find((item) => item.id === batch.profile_id);
   const controller = api.controllers.find((item) => item.id === tank?.controller_id);
   const ramp = getRampState(profile, batch);
+  const publicUrl = publicFermentationUrl(batch.id);
 
   const readings = api.readings
     .filter((reading) => Number(reading.tank_id) === Number(batch.tank_id))
@@ -150,6 +156,27 @@ export default function BatchDetails() {
           <strong>{controller ? `Slave ${controller.slave_id}` : "-"}</strong>
         </article>
       </section>
+
+      {batch.status === "finished" && (
+        <section className="section qr-section">
+          <div>
+            <h2>QR Code da Fermentação</h2>
+            <p>Use este QR para compartilhar uma página pública e bonita deste lote finalizado.</p>
+            <div className="qr-actions">
+              <a href={publicUrl} target="_blank" rel="noreferrer">
+                <button>Abrir página pública</button>
+              </a>
+              <button onClick={() => navigator.clipboard?.writeText(publicUrl)}>
+                Copiar link
+              </button>
+            </div>
+          </div>
+          <div className="qr-card">
+            <QRCodeSVG value={publicUrl} size={180} level="M" includeMargin />
+            <small>{publicUrl}</small>
+          </div>
+        </section>
+      )}
 
       <section className="section">
         <div className="section-title-row">
