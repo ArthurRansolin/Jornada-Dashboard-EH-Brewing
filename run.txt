@@ -23,6 +23,10 @@ Para popular o banco:
 cd C:\Users\teste\Documents\projetobrew\Jornada-Dashboard-EH-Brewing\backend
 ..\.venv\Scripts\python.exe -m app.scripts.seed
 
+O banco SQLite usado pelo backend fica sempre em:
+
+backend\brewery.db
+
 Os erros de conexao em 127.0.0.1:5020 aparecem quando o polling Modbus esta ligado,
 mas o simulador/hardware nao esta rodando. Para usar so o dashboard demo, deixe no .env:
 
