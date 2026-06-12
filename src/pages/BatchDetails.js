@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import {
   CategoryScale,
   Chart as ChartJS,
@@ -50,13 +51,51 @@ function getRampState(profile, batch) {
 }
 
 function publicFermentationUrl(batchId) {
-  return `${window.location.origin}/fermentacoes/${batchId}`;
+  const baseUrl = process.env.REACT_APP_PUBLIC_BASE_URL || window.location.origin;
+  return `${baseUrl}/fermentacoes/${batchId}`;
+}
+
+function profileSegmentsToDraft(profile) {
+  return [...(profile?.segments || [])]
+    .sort((a, b) => a.segment_order - b.segment_order)
+    .map((segment) => ({
+      target_sp: String(segment.target_sp ?? ""),
+      duration_hours: String(((segment.duration_seconds || 0) / 3600).toFixed(1)),
+    }));
+}
+
+function draftToSegments(draftSegments) {
+  return draftSegments
+    .map((segment, index) => ({
+      segment_order: index + 1,
+      target_sp: Number(segment.target_sp),
+      duration_seconds: Math.max(1, Math.round(Number(segment.duration_hours || 0) * 3600)),
+    }))
+    .filter((segment) => Number.isFinite(segment.target_sp) && Number.isFinite(segment.duration_seconds));
 }
 
 export default function BatchDetails() {
   const { id } = useParams();
   const api = useApi();
   const batch = api.batches.find((item) => item.id === Number(id));
+  const tank = api.tanks.find((item) => item.id === batch?.tank_id);
+  const beerType = api.beerTypes.find((item) => item.id === batch?.beer_type_id);
+  const profile = api.profiles.find((item) => item.id === batch?.profile_id);
+  const controller = api.controllers.find((item) => item.id === tank?.controller_id);
+  const ramp = getRampState(profile, batch);
+  const currentSegmentOrder = ramp.current?.segment_order;
+  const currentTargetSp = ramp.current?.target_sp;
+  const [draftSegments, setDraftSegments] = useState([]);
+  const [quickSp, setQuickSp] = useState("");
+  const [adjustMessage, setAdjustMessage] = useState("");
+
+  useEffect(() => {
+    setDraftSegments(profileSegmentsToDraft(profile));
+  }, [profile]);
+
+  useEffect(() => {
+    setQuickSp(currentTargetSp !== undefined ? String(currentTargetSp) : "");
+  }, [currentSegmentOrder, currentTargetSp]);
 
   if (!batch) {
     return (
@@ -69,17 +108,13 @@ export default function BatchDetails() {
     );
   }
 
-  const tank = api.tanks.find((item) => item.id === batch.tank_id);
-  const beerType = api.beerTypes.find((item) => item.id === batch.beer_type_id);
-  const profile = api.profiles.find((item) => item.id === batch.profile_id);
-  const controller = api.controllers.find((item) => item.id === tank?.controller_id);
-  const ramp = getRampState(profile, batch);
   const publicUrl = publicFermentationUrl(batch.id);
-
   const readings = api.readings
     .filter((reading) => Number(reading.tank_id) === Number(batch.tank_id))
     .filter((reading) => !batch.started_at || new Date(reading.ts) >= new Date(batch.started_at))
     .sort((a, b) => new Date(a.ts) - new Date(b.ts));
+  const latestReading = readings[readings.length - 1];
+  const isRunning = batch.status === "running";
 
   const hourlyRows = readings.map((reading) => ({
     ...reading,
@@ -128,6 +163,57 @@ export default function BatchDetails() {
     },
   };
 
+  const updateDraftSegment = (index, field, value) => {
+    setDraftSegments((current) =>
+      current.map((segment, segmentIndex) =>
+        segmentIndex === index ? { ...segment, [field]: value } : segment
+      )
+    );
+  };
+
+  const saveProfileSegments = async (nextDraft = draftSegments, successMessage = "Rampa atualizada.") => {
+    if (!profile) return;
+    setAdjustMessage("Salvando ajustes...");
+    try {
+      await api.updateProfile(profile.id, {
+        name: profile.name,
+        description: profile.description,
+        mode: profile.mode,
+        time_base: profile.time_base,
+        segments: draftToSegments(nextDraft),
+      });
+      setAdjustMessage(successMessage);
+    } catch (error) {
+      setAdjustMessage(error.message || "Erro ao salvar ajustes");
+    }
+  };
+
+  const applyCurrentSetpoint = async () => {
+    if (!profile || ramp.currentIndex < 0) return;
+    const nextDraft = draftSegments.map((segment, index) =>
+      index === ramp.currentIndex ? { ...segment, target_sp: quickSp } : segment
+    );
+
+    setDraftSegments(nextDraft);
+    setAdjustMessage("Aplicando novo setpoint...");
+    try {
+      await api.updateProfile(profile.id, {
+        name: profile.name,
+        description: profile.description,
+        mode: profile.mode,
+        time_base: profile.time_base,
+        segments: draftToSegments(nextDraft),
+      });
+      if (controller) {
+        await api.setpoint(controller.id, Number(quickSp));
+      }
+      setAdjustMessage(controller ? "Setpoint aplicado e rampa atualizada." : "Rampa atualizada. Tanque sem controlador associado.");
+      await api.refresh();
+    } catch (error) {
+      setAdjustMessage(error.message || "Erro ao aplicar setpoint");
+    }
+  };
+
   return (
     <div className="batch-page">
       <section className="admin-hero">
@@ -156,6 +242,64 @@ export default function BatchDetails() {
           <strong>{controller ? `Slave ${controller.slave_id}` : "-"}</strong>
         </article>
       </section>
+
+      {isRunning && (
+        <section className="section live-adjust-section">
+          <div className="section-title-row">
+            <div>
+              <h2>Ajustes em andamento</h2>
+              <p>Altere o setpoint atual ou ajuste as próximas etapas sem finalizar o lote.</p>
+            </div>
+            <button onClick={api.refresh}>Atualizar leitura</button>
+          </div>
+
+          <div className="live-adjust-grid">
+            <article className="live-metric">
+              <span>PV atual</span>
+              <strong>{latestReading?.pv ?? "-"} °C</strong>
+            </article>
+            <article className="live-metric">
+              <span>SP ativo</span>
+              <strong>{latestReading?.sp_written ?? latestReading?.sp_active ?? ramp.current?.target_sp ?? "-"} °C</strong>
+            </article>
+            <article className="live-metric">
+              <span>Etapa</span>
+              <strong>{ramp.current ? `${ramp.current.segment_order}/${ramp.segments.length}` : "-"}</strong>
+            </article>
+          </div>
+
+          <div className="quick-setpoint">
+            <label>
+              Novo SP da etapa atual
+              <input type="number" step="0.1" value={quickSp} onChange={(event) => setQuickSp(event.target.value)} />
+            </label>
+            <button onClick={applyCurrentSetpoint} disabled={!profile || ramp.currentIndex < 0 || quickSp === ""}>
+              Aplicar agora
+            </button>
+          </div>
+
+          <div className="ramp-editor">
+            {draftSegments.map((segment, index) => (
+              <article className={`ramp-edit-step ${index === ramp.currentIndex ? "active" : ""}`} key={`${profile?.id}-${index}`}>
+                <span>Etapa {index + 1}</span>
+                <label>
+                  SP °C
+                  <input type="number" step="0.1" value={segment.target_sp} onChange={(event) => updateDraftSegment(index, "target_sp", event.target.value)} />
+                </label>
+                <label>
+                  Duração h
+                  <input type="number" step="0.5" value={segment.duration_hours} onChange={(event) => updateDraftSegment(index, "duration_hours", event.target.value)} />
+                </label>
+              </article>
+            ))}
+          </div>
+
+          <div className="adjust-actions">
+            <button onClick={() => saveProfileSegments()}>Salvar rampa</button>
+            {adjustMessage && <p className="adjust-message">{adjustMessage}</p>}
+          </div>
+        </section>
+      )}
 
       {batch.status === "finished" && (
         <section className="section qr-section">

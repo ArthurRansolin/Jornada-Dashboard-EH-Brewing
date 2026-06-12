@@ -1,4 +1,12 @@
-const API_URL = process.env.REACT_APP_API_URL || 'http://127.0.0.1:8000';
+function defaultApiUrl() {
+  if (typeof window === 'undefined') return 'http://127.0.0.1:8000';
+
+  const { protocol, hostname } = window.location;
+  const apiHost = hostname === 'localhost' ? '127.0.0.1' : hostname;
+  return `${protocol}//${apiHost}:8000`;
+}
+
+const API_URL = process.env.REACT_APP_API_URL || defaultApiUrl();
 
 async function request(path, options = {}) {
   const res = await fetch(`${API_URL}${path}`, {

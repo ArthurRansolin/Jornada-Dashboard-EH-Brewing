@@ -62,6 +62,15 @@ function profileLabel(profile) {
   return `${profile.name}${count ? ` (${count} etapas)` : ""}`;
 }
 
+function batchStatusLabel(status) {
+  const labels = {
+    running: "Em andamento",
+    finished: "Finalizado",
+    draft: "Planejado",
+  };
+  return labels[status] || status;
+}
+
 export default function Admin() {
   const api = useApi();
   const [controller, setController] = useState(emptyController);
@@ -227,14 +236,14 @@ export default function Admin() {
         fg_target: numberOrNull(batch.fg_target),
       });
       setBatch(emptyBatch);
-    }, "Lote iniciado. A rampa serÃ¡ aplicada pelo polling.");
+    }, "Lote iniciado. A rampa será aplicada pelo polling.");
   }
 
   return (
     <div className="admin-page">
       <section className="admin-hero">
         <div>
-          <h1>Controle de FermentaÃ§Ã£o</h1>
+          <h1>Controle de Fermentação</h1>
           <p>Cadastre controladores, tanques, estilos e rampas antes de iniciar um lote.</p>
         </div>
         <div className="system-status">
@@ -249,8 +258,8 @@ export default function Admin() {
         <section className="section">
           <h2>Nova Rampa</h2>
           <form onSubmit={createProfile}>
-            <input required placeholder="Nome da rampa. Ex: Ale padrÃ£o" value={profile.name} onChange={(e) => setProfile({ ...profile, name: e.target.value })} />
-            <textarea placeholder="DescriÃ§Ã£o do objetivo da rampa" value={profile.description} onChange={(e) => setProfile({ ...profile, description: e.target.value })} />
+            <input required placeholder="Nome da rampa. Ex: Ale padrão" value={profile.name} onChange={(e) => setProfile({ ...profile, name: e.target.value })} />
+            <textarea placeholder="Descrição do objetivo da rampa" value={profile.description} onChange={(e) => setProfile({ ...profile, description: e.target.value })} />
             <div className="ramp-grid">              {profile.segments.map((segment, index) => (
                 <div className="ramp-step" key={index}>
                   <div className="ramp-step-header">
@@ -274,13 +283,13 @@ export default function Admin() {
           <h2>Tipo de Cerveja</h2>
           <form onSubmit={createBeerType}>
             <input required placeholder="Nome. Ex: IPA, Lager, Weiss" value={beerType.name} onChange={(e) => setBeerType({ ...beerType, name: e.target.value })} />
-            <textarea placeholder="DescriÃ§Ã£o ou observaÃ§Ãµes" value={beerType.description} onChange={(e) => setBeerType({ ...beerType, description: e.target.value })} />
+            <textarea placeholder="Descrição ou observações" value={beerType.description} onChange={(e) => setBeerType({ ...beerType, description: e.target.value })} />
             <div className="grid2">
-              <input type="number" step="0.1" placeholder="Temp. mÃ­nima Â°C" value={beerType.ideal_temp_min} onChange={(e) => setBeerType({ ...beerType, ideal_temp_min: e.target.value })} />
-              <input type="number" step="0.1" placeholder="Temp. mÃ¡xima Â°C" value={beerType.ideal_temp_max} onChange={(e) => setBeerType({ ...beerType, ideal_temp_max: e.target.value })} />
+              <input type="number" step="0.1" placeholder="Temp. mínima °C" value={beerType.ideal_temp_min} onChange={(e) => setBeerType({ ...beerType, ideal_temp_min: e.target.value })} />
+              <input type="number" step="0.1" placeholder="Temp. máxima °C" value={beerType.ideal_temp_max} onChange={(e) => setBeerType({ ...beerType, ideal_temp_max: e.target.value })} />
             </div>
             <select value={beerType.default_profile_id} onChange={(e) => setBeerType({ ...beerType, default_profile_id: e.target.value })}>
-              <option value="">Rampa padrÃ£o</option>
+              <option value="">Rampa padrão</option>
               {api.profiles.map((item) => (
                 <option key={item.id} value={item.id}>{profileLabel(item)}</option>
               ))}
@@ -312,9 +321,9 @@ export default function Admin() {
             <input required placeholder="Nome do tanque" value={tank.name} onChange={(e) => setTank({ ...tank, name: e.target.value })} />
             <div className="grid2">
               <input type="number" step="0.1" placeholder="Capacidade L" value={tank.capacity_l} onChange={(e) => setTank({ ...tank, capacity_l: e.target.value })} />
-              <input type="number" step="0.1" placeholder="Temp. ideal Â°C" value={tank.ideal_temp_c} onChange={(e) => setTank({ ...tank, ideal_temp_c: e.target.value })} />
+              <input type="number" step="0.1" placeholder="Temp. ideal °C" value={tank.ideal_temp_c} onChange={(e) => setTank({ ...tank, ideal_temp_c: e.target.value })} />
             </div>
-            <input placeholder="LocalizaÃ§Ã£o" value={tank.location} onChange={(e) => setTank({ ...tank, location: e.target.value })} />
+            <input placeholder="Localização" value={tank.location} onChange={(e) => setTank({ ...tank, location: e.target.value })} />
             <select value={tank.controller_id} onChange={(e) => setTank({ ...tank, controller_id: e.target.value })}>
               <option value="">Sem controlador</option>
               {api.controllers.map((item) => (
@@ -335,7 +344,7 @@ export default function Admin() {
               <option value="">Tanque</option>
               {api.tanks.map((item) => (
                 <option key={item.id} value={item.id} disabled={runningByTank.has(item.id)}>
-                  {item.name}{runningByTank.has(item.id) ? " - jÃ¡ tem lote ativo" : ""}
+                  {item.name}{runningByTank.has(item.id) ? " - já tem lote ativo" : ""}
                 </option>
               ))}
             </select>
@@ -369,7 +378,7 @@ export default function Admin() {
       </div>
 
       <section className="section">
-        <h2>OperaÃ§Ã£o Atual</h2>
+        <h2>Operação Atual</h2>
         <div className="ops-grid">
           {api.tanks.length === 0 ? (
             <p className="reading-empty">Nenhum tanque cadastrado ainda.</p>
@@ -383,12 +392,12 @@ export default function Admin() {
                 <article className="ops-card" key={item.id}>
                   <div>
                     <h3>{item.name}</h3>
-                    <p>{item.capacity_l || "-"} L Â· {item.location || "sem localizaÃ§Ã£o"}</p>
-                    <p>Controlador: {controllerInfo ? `${controllerInfo.name} / slave ${controllerInfo.slave_id}` : "nÃ£o associado"}</p>
+                    <p>{item.capacity_l || "-"} L · {item.location || "sem localização"}</p>
+                    <p>Controlador: {controllerInfo ? `${controllerInfo.name} / slave ${controllerInfo.slave_id}` : "não associado"}</p>
                     <p>
                       Lote:{" "}
                       {runningBatch ? (
-                        <Link to={`/batches/${runningBatch.id}`}>{runningBatch.recipe_name} Â· {runningProfile?.name || "rampa"}</Link>
+                        <Link to={`/batches/${runningBatch.id}`}>{runningBatch.recipe_name} · {runningProfile?.name || "rampa"}</Link>
                       ) : (
                         "sem lote ativo"
                       )}
@@ -418,11 +427,11 @@ export default function Admin() {
           {api.profiles.map((item) => (
             <article className="profile-card" key={item.id}>
               <h3>{item.name}</h3>
-              <p>{item.description || "Sem descriÃ§Ã£o"}</p>
+              <p>{item.description || "Sem descrição"}</p>
               <ol>
                 {(item.segments || []).sort((a, b) => a.segment_order - b.segment_order).map((segment) => (
                   <li key={segment.id}>
-                    {segment.target_sp} Â°C por {(segment.duration_seconds / 3600).toFixed(1)} h
+                    {segment.target_sp} °C por {(segment.duration_seconds / 3600).toFixed(1)} h
                   </li>
                 ))}
               </ol>
@@ -432,7 +441,7 @@ export default function Admin() {
       </section>
 
       <section className="section">
-        <h2>HistÃ³rico de Lotes</h2>
+        <h2>Histórico de Lotes</h2>
         <div className="profile-list">
           {api.batches.map((item) => {
             const tankInfo = api.tanks.find((tankItem) => tankItem.id === item.tank_id);
@@ -440,9 +449,9 @@ export default function Admin() {
             return (
               <Link className="profile-card link-card" key={item.id} to={`/batches/${item.id}`}>
                 <h3>{item.recipe_name}</h3>
-                <p>{tankInfo?.name || "Tanque removido"} Â· {profileInfo?.name || "Sem rampa"}</p>
-                <p>Status: {item.status}</p>
-                <p>InÃ­cio: {item.started_at ? new Date(item.started_at).toLocaleString("pt-BR") : "nÃ£o iniciado"}</p>
+                <p>{tankInfo?.name || "Tanque removido"} · {profileInfo?.name || "Sem rampa"}</p>
+                <span className={`batch-status ${item.status}`}>{batchStatusLabel(item.status)}</span>
+                <p>Início: {item.started_at ? new Date(item.started_at).toLocaleString("pt-BR") : "não iniciado"}</p>
               </Link>
             );
           })}
@@ -451,7 +460,6 @@ export default function Admin() {
     </div>
   );
 }
-
 
 
 

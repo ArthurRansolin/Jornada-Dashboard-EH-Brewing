@@ -31,6 +31,16 @@ class TemperatureProfileCreate(TemperatureProfileBase):
     segments: list[TemperatureProfileSegmentCreate] = []
 
 
+class TemperatureProfileUpdate(BaseModel):
+    name: str | None = None
+    description: str | None = None
+    mode: str | None = None
+    time_base: str | None = None
+    tolerance: int | None = None
+    resume_mode: int | None = None
+    segments: list[TemperatureProfileSegmentCreate] | None = None
+
+
 class TemperatureProfileOut(TemperatureProfileBase):
     model_config = ConfigDict(from_attributes=True)
 

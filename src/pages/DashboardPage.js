@@ -65,10 +65,10 @@ export default function DashboardPage() {
   const chartOptions = {
     responsive: true,
     maintainAspectRatio: false,
-    plugins: { legend: { labels: { color: "#f8f5ee" } } },
+    plugins: { legend: { labels: { color: "#1f2a2e" } } },
     scales: {
-      x: { ticks: { color: "#9fb0c0" }, grid: { color: "rgba(148, 163, 184, 0.12)" } },
-      y: { ticks: { color: "#9fb0c0" }, grid: { color: "rgba(148, 163, 184, 0.12)" } },
+      x: { ticks: { color: "#6d6a63" }, grid: { color: "rgba(148, 163, 184, 0.18)" } },
+      y: { ticks: { color: "#6d6a63" }, grid: { color: "rgba(148, 163, 184, 0.18)" } },
     },
   };
 

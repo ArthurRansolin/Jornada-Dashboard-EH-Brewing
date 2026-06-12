@@ -521,6 +521,7 @@ a {
   background:
     linear-gradient(135deg, rgba(0, 124, 137, 0.12), transparent 46%),
     linear-gradient(180deg, #ffffff, #f7f4ed);
+  color: var(--text-dark);
   position: relative;
   overflow: hidden;
 }
@@ -556,6 +557,7 @@ a {
   border-radius: 8px;
   background: #ffffff;
   border: 1px solid var(--border);
+  color: var(--text-dark);
 }
 
 .notice {
@@ -750,6 +752,14 @@ button:disabled {
   background: var(--accent);
 }
 
+.batch-status.draft {
+  background: var(--warning);
+}
+
+.profile-card .batch-status {
+  justify-self: start;
+}
+
 .batch-summary {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -772,6 +782,91 @@ button:disabled {
 
 .summary-card strong {
   font-size: 22px;
+}
+
+.live-adjust-section {
+  border-color: rgba(0, 124, 137, 0.28);
+  background:
+    linear-gradient(135deg, rgba(0, 124, 137, 0.08), transparent 42%),
+    #f7f4ed;
+}
+
+.live-adjust-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.live-metric {
+  display: grid;
+  gap: 6px;
+  padding: 14px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: #ffffff;
+  color: var(--text-dark);
+}
+
+.live-metric span,
+.ramp-edit-step > span,
+.adjust-message {
+  color: var(--text-muted);
+}
+
+.live-metric strong {
+  font-size: 24px;
+}
+
+.quick-setpoint {
+  display: grid;
+  grid-template-columns: minmax(180px, 1fr) auto;
+  align-items: end;
+  gap: 12px;
+  padding: 14px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: #ffffff;
+}
+
+.quick-setpoint button {
+  margin: 0;
+  min-width: 150px;
+}
+
+.ramp-editor {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 12px;
+}
+
+.ramp-edit-step {
+  display: grid;
+  gap: 10px;
+  padding: 14px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: #ffffff;
+}
+
+.ramp-edit-step.active {
+  border-color: var(--teal);
+  box-shadow: 0 0 0 2px rgba(0, 124, 137, 0.12);
+}
+
+.ramp-edit-step.active > span {
+  color: var(--teal);
+  font-weight: 800;
+}
+
+.adjust-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.adjust-actions button {
+  margin: 0;
 }
 
 .section-title-row {
@@ -1040,6 +1135,8 @@ button:disabled {
   }
 
   .ramp-grid,
+  .live-adjust-grid,
+  .quick-setpoint,
   .metric-row,
   .batch-summary,
   .dashboard-kpis,
@@ -1138,6 +1235,7 @@ button:disabled {
   .admin-grid,
   .ops-grid,
   .profile-list,
+  .ramp-editor,
   .timeline {
     grid-template-columns: 1fr;
     gap: 12px;
@@ -1175,6 +1273,24 @@ button:disabled {
 
   .summary-card strong {
     font-size: 20px;
+  }
+
+  .live-metric strong {
+    font-size: 22px;
+  }
+
+  .quick-setpoint {
+    padding: 12px;
+  }
+
+  .quick-setpoint button,
+  .adjust-actions button {
+    width: 100%;
+  }
+
+  .adjust-actions {
+    display: grid;
+    grid-template-columns: 1fr;
   }
 
   .tank-grid {

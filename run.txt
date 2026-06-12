@@ -11,12 +11,27 @@ python -m venv .venv
 
 Para iniciar o backend pela raiz do projeto:
 
-.\.venv\Scripts\python.exe -m uvicorn app.main:app --app-dir backend --reload --port 8000
+.\.venv\Scripts\python.exe -m uvicorn app.main:app --app-dir backend --reload --host 0.0.0.0 --port 8000
 
 Ou, se ja estiver dentro da pasta backend:
 
 cd C:\Users\teste\Documents\projetobrew\Jornada-Dashboard-EH-Brewing\backend
-..\.venv\Scripts\python.exe -m uvicorn app.main:app --reload --port 8000
+..\.venv\Scripts\python.exe -m uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+
+Para acessar pelo celular na mesma rede Wi-Fi, o jeito mais simples e iniciar frontend e backend juntos:
+
+cd C:\Users\teste\Documents\projetobrew\Jornada-Dashboard-EH-Brewing
+npm run start:lan
+
+Abra no celular o endereco que aparecer no terminal, algo como:
+
+http://192.168.0.10:3000
+
+Nao use localhost ou 127.0.0.1 no celular, porque esses enderecos apontam para o proprio celular, nao para o computador.
+
+Se aparecer "Something is already running on port 3000" ou se o celular abrir sem dados, feche os terminais antigos do frontend/backend e rode de novo:
+
+npm run start:lan
 
 Para popular o banco:
 

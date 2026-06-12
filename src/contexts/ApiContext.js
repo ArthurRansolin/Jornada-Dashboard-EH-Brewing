@@ -104,6 +104,10 @@ export function ApiProvider({ children }) {
         await api.post('/profiles', payload);
         await refresh();
       },
+      updateProfile: async (id, payload) => {
+        await api.put(`/profiles/${id}`, payload);
+        await refresh();
+      },
       createProfileSegment: async (id, payload) => {
         await api.post(`/profiles/${id}/segments`, payload);
         await refresh();

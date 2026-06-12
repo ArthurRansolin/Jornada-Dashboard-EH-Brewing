@@ -18,6 +18,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
+    "start:lan": "powershell -ExecutionPolicy Bypass -File scripts/start-lan.ps1",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
