@@ -643,11 +643,7 @@ a {
 .ops-grid,
 .profile-list {
   display: grid;
-<<<<<<< HEAD
   grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-=======
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
->>>>>>> e5e648d040b759f30f60fc040065d120d9be76ba
   gap: 14px;
 }
 
@@ -663,11 +659,7 @@ a {
 
 .metric-row {
   display: grid;
-<<<<<<< HEAD
   grid-template-columns: repeat(4, minmax(min-content, 1fr));
-=======
-  grid-template-columns: repeat(4, minmax(0, 1fr));
->>>>>>> e5e648d040b759f30f60fc040065d120d9be76ba
   gap: 8px;
 }
 
@@ -685,10 +677,7 @@ a {
 .metric-row strong {
   color: var(--text-dark);
   font-size: 18px;
-<<<<<<< HEAD
   white-space: nowrap;
-=======
->>>>>>> e5e648d040b759f30f60fc040065d120d9be76ba
 }
 
 .profile-card ol {
@@ -724,7 +713,6 @@ a {
 }
 
 .dashboard-grid {
-<<<<<<< HEAD
   display: flex;
   flex-direction: column;
   gap: 18px;
@@ -1226,11 +1214,6 @@ button:disabled {
     flex: 0 0 auto;
     padding: 8px 10px;
     border-radius: 999px;
-<<<<<<< HEAD
-=======
-    background: #ffffff;
-    border: 1px solid var(--border);
->>>>>>> e5e648d040b759f30f60fc040065d120d9be76ba
     font-size: 13px;
   }
 
